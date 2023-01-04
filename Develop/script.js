@@ -8,6 +8,8 @@ const criteria = {
   specialChars: false, 
 }
 
+
+// Functions for generating specific characters =================================
 function generateRandomLowercase() {
   var alphabet = "abcdefghijklmnopqrstuvwxyz"; // Initalize alphabet for grabbing random letter
   var randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)]
@@ -30,19 +32,18 @@ function generateRandomSpecialChar() {
 
   return specialCharacters[Math.floor(Math.random() * specialCharacters.length)];
 }
+// =============================================================================
 
-console.log(generateRandomLowercase());
-console.log(generateRandomUppercase());
-console.log(generateRandomNumber());
-console.log(generateRandomSpecialChar());
 
 function generatePassword() {
   var pw = "";
   var passwordLength = prompt("Enter password length: ", "Min: 8 / Max: 128");
-  console.log(passwordLength);
   
   // Ask user for password length and validate their response
-  if (Number(passwordLength) < 8) {
+  if (passwordLength === null) {
+    return
+  }
+  else if (Number(passwordLength) < 8) {
     alert("Password length is too short.");
     return
   }
@@ -52,9 +53,6 @@ function generatePassword() {
   }
   else if (isNaN(passwordLength)) {
     alert("Invalid response.");
-    return
-  }
-  else if (passwordLength === null) {
     return
   }
   else {
@@ -69,9 +67,9 @@ function generatePassword() {
 
   // Creates a randomizer to use when generating the password
   const randomizer = [];
-  for (var criteriaKey in criteria) {
-    if (criteria[criteriaKey] === true) {
-      switch(criteriaKey) {
+  for (var criteriaKey in criteria) { // Grabs key from criteria object
+    if (criteria[criteriaKey] === true) { // Checks if key is true
+      switch(criteriaKey) { // If key is true, check which key it is and append to randomizer
         case "lowercase":
           randomizer.push(generateRandomLowercase);
           break;
@@ -89,18 +87,19 @@ function generatePassword() {
       }
     }
   }
-  console.log(randomizer);
+  console.log(randomizer)
 
   // Confirm criteria for user
   if (confirm("Generate password using this criteria?\nPassword length: " + criteria.length + "\nLowercase letters: " + criteria.lowercase + "\nUppercase letters: " + criteria.uppercase + "\nNumerical values: " + criteria.numeric + "\nSpecial Characters: " + criteria.specialChars)) {
-    for (var i = 0; i < (criteria.length + 1); i++) {
+    for (var firstIteration = 0; firstIteration < randomizer.length; firstIteration++) { // A first time iteration through the randomizer to ensure one of each
+      pw += randomizer[firstIteration]();                                                // charcter type is generated
+    }
+    for (var i = 0; i < (criteria.length - randomizer.length); i++) { // Randomly generates a character type until specified length is reached
       var randomInt = Math.floor(Math.random() * randomizer.length);
       pw += randomizer[randomInt]();
     }
+    console.log(pw.length);
     return pw;
-  }
-  else {
-
   }
 }
 
